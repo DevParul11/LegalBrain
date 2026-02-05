@@ -1,32 +1,29 @@
 function sendMessage() {
-    let inputBox = document.getElementById("user-input");
-    let message = inputBox.value;
+  const input = document.getElementById("userInput");
+  const msg = input.value.trim();
+  if (!msg) return;
 
-    if (message === "") return;
+  const chatBox = document.getElementById("chatBox");
 
-    let chatBox = document.getElementById("chat-box");
+  const userDiv = document.createElement("div");
+  userDiv.className = "user-message";
+  userDiv.innerText = msg;
+  chatBox.appendChild(userDiv);
 
-    // User message
-    let userMsg = document.createElement("p");
-    userMsg.innerHTML = "<strong>You:</strong> " + message;
-    chatBox.appendChild(userMsg);
+  input.value = "";
+  chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Send to backend
-    fetch("/chat", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        let botMsg = document.createElement("p");
-        botMsg.innerHTML = "<strong>Legal Brain:</strong> " + data.reply;
-        chatBox.appendChild(botMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-
-    inputBox.value = "";
+  fetch("/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: msg })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const botDiv = document.createElement("div");
+    botDiv.className = "bot-message";
+    botDiv.innerText = data.answer;
+    chatBox.appendChild(botDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
 }
-
