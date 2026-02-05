@@ -1,29 +1,33 @@
-function sendMessage() {
-  const input = document.getElementById("userInput");
-  const msg = input.value.trim();
-  if (!msg) return;
+const inputField = document.getElementById("userInput");
+const chatBox = document.getElementById("chatBox");
 
-  const chatBox = document.getElementById("chatBox");
-
-  const userDiv = document.createElement("div");
-  userDiv.className = "user-message";
-  userDiv.innerText = msg;
-  chatBox.appendChild(userDiv);
-
-  input.value = "";
+function addMessage(text, sender) {
+  const msg = document.createElement("div");
+  msg.className = sender === "user" ? "user-message" : "bot-message";
+  msg.innerText = text;
+  chatBox.appendChild(msg);
   chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function sendMessage() {
+  const userText = inputField.value.trim();
+  if (!userText) return;
+
+  addMessage(userText, "user");
+  inputField.value = "";
 
   fetch("/ask", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: msg })
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ question: userText }),
   })
-  .then(res => res.json())
-  .then(data => {
-    const botDiv = document.createElement("div");
-    botDiv.className = "bot-message";
-    botDiv.innerText = data.answer;
-    chatBox.appendChild(botDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
+    .then((res) => res.json())
+    .then((data) => {
+      addMessage(data.answer, "bot");
+    })
+    .catch(() => {
+      addMessage("⚠️ Server error. Try again.", "bot");
+    });
 }
