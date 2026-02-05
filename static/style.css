@@ -1,0 +1,19 @@
+#chat-box p {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 6px 0;
+    max-width: 80%;
+}
+
+#chat-box p strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+#chat-box p:has(strong:contains("You")) {
+    background-color: #e3f2fd;
+}
+
+#chat-box p:has(strong:contains("Legal Brain")) {
+    background-color: #f1f8e9;
+}
