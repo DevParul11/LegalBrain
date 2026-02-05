@@ -16,18 +16,16 @@ function sendMessage() {
   addMessage(userText, "user");
   inputField.value = "";
 
-  fetch("/ask", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ question: userText }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      addMessage(data.answer, "bot");
-    })
-    .catch(() => {
-      addMessage("⚠️ Server error. Try again.", "bot");
-    });
+ fetch("/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ message: userText }),
+})
+.then((res) => res.json())
+.then((data) => {
+  addMessage(data.reply, "bot");
+});
+
 }
